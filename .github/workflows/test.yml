@@ -15,7 +15,7 @@ jobs:
         if [ "${{ github.event_name }}" == "push" ]; then
           echo "This is a push event to the ${{ github.ref }} branch with the action ${{ github.event.action }}"
           # Add your commands for push event
-        elif [ "${{ github.event_name }}" == "pull_request" ] && [ ${{ contains(github.event.pull_request.labels.*.name, 'bug')}} ]; then
+        elif [ "${{ github.event_name }}" == "pull_request" ] && [ ${{ contains(github.event.pull_request.labels.*.name, 'bug')}} == true ]; then
           echo "This is a pull request event for the ${{ github.base_ref }} branch to the ${{ github.head_ref }} branch with the action ${{ github.event.action }} with lables ${{ join(github.event.pull_request.labels.*.name, ',') }}"
           # Add your commands for pull request event
         else
