@@ -13,10 +13,10 @@ jobs:
     - name: get_event
       run: |
         if [ "${{ github.event_name }}" == "push" ]; then
-        echo "This is a push event"
+        echo "This is a push event to the ${{ github.ref }} branch"
         # Add your commands for push event
         elif [ "${{ github.event_name }}" == "pull_request" ]; then
-          echo "This is a pull request event"
+          echo "This is a pull request event for the ${{ github.base_ref }} branch to the ${{ github.head_ref }} branch with the action ${{ github.event.action }}"
           # Add your commands for pull request event
         else
           echo "This is an event other than push or pull_request"
