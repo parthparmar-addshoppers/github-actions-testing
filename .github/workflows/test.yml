@@ -17,10 +17,14 @@ jobs:
         # Add your commands for push event
         elif [ "${{ github.event_name }}" == "pull_request" ]; then
           echo "This is a pull request event for the ${{ github.base_ref }} branch to the ${{ github.head_ref }} branch with the action ${{ github.event.action }}"
-          x=${{ toJson(github.event.pull_request.labels.*.name) }}
-          echo $x  
           # Add your commands for pull request event
         else
           echo "This is an event other than push or pull_request"
           # Add your commands for other events
         fi
+
+    - name: run_labele_steps
+      if: github.event_name == 'pull_request' && contains(${{ github.event.pull_request.labels.*.name }}, 'bug')
+      run: |
+        echo "bug label added to the pull request"
+        # Add your commands for pull request event
