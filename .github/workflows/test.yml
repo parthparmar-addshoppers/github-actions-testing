@@ -26,6 +26,6 @@ jobs:
     - name: run_labele_steps
       if: contains(${{ join(github.event.pull_request.labels.*.name, ',' ) }}, 'bug')
       run: |
-        echo "${{ join(github.event.pull_request.labels.*.name, ',' ) }}"
+        echo "${{ toJson(github.event.pull_request) }}"
         echo "bug label added to the pull request"
         # Add your commands for pull request event
