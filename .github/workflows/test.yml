@@ -6,19 +6,33 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
 
+env:
+  prod_bucket: "prod-bucket"
+  staging_bucket: "stage-bucket"
+
 jobs:
   project_selector:
     runs-on: ubuntu-latest
     steps:
-    - name: get_event
+    - id: get_event
       run: |
         if [ "${{ github.event_name }}" == "push" ]; then
-        echo "This is a push event to the ${{ github.ref }} branch"
-        # Add your commands for push event
-        elif [ "${{ github.event_name }}" == "pull_request" ]; then
-          echo "This is a pull request event for the ${{ github.base_ref }} branch to the ${{ github.head_ref }} branch with the action ${{ github.event.action }}"
-          # Add your commands for pull request event
+          echo "This is a push event to the ${{ github.ref }} branch with the action ${{ github.event.action }}"
+          echo "bucket=${{env.prod_bucket}}" >> "$GITHUB_OUTPUT"
+        elif [ "${{ github.event_name }}" == "pull_request" ] && [ ${{ contains(github.event.pull_request.labels.*.name, 'bug')}} == true ]; then
+          echo "This is a pull request event for the ${{ github.base_ref }} branch to the ${{ github.head_ref }} branch with the action ${{ github.event.action }} with lables ${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          echo "bucket=${{env.staging_bucket}}" >> "$GITHUB_OUTPUT"
         else
           echo "This is an event other than push or pull_request"
           # Add your commands for other events
         fi
+    outputs:
+      bucket: ${{ steps.get_event.outputs.bucket }}
+  
+  deploy_to_gcp:
+    needs: project_selector
+    runs-on: ubuntu-latest
+    steps:
+    - id: get_env
+      run: |
+        echo "${{ needs.project_selector.outputs.bucket }}"
