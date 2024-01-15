@@ -35,7 +35,7 @@ jobs:
   deploy_to_gcp:
     needs: project_selector
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'bug'))
+    if: needs.project_selector.outputs.bucket != ''
     steps:
     - id: get_env
       run: |
